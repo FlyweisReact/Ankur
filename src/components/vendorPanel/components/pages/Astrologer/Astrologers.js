@@ -7,10 +7,11 @@ import HOC from "../../layout/HOC";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useEffect } from "react";
-import { Container, Table, Modal, Form, Button } from "react-bootstrap";
+import {  Table, Modal, Form, Button } from "react-bootstrap";
 
 const Astrologers = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [editA, setP] = useState(false);
   const [data, setData] = useState([]);
   const [id, setID] = useState("");
@@ -22,7 +23,7 @@ const Astrologers = () => {
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/admin/astro",
+        "https://ayush-astro-backend.vercel.app/admin/astro",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ const Astrologers = () => {
   const deleteAstro = async (id) => {
     try {
       const data = await axios.delete(
-        `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/admin/astro/${id}`,
+        `https://ayush-astro-backend.vercel.app/admin/astro/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -83,7 +84,7 @@ const Astrologers = () => {
       e.preventDefault();
       try {
         const data = await axios.post(
-          "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/admin/astro",
+          "https://ayush-astro-backend.vercel.app/admin/astro",
           {
             firstName,
             lastName,
@@ -121,7 +122,7 @@ const Astrologers = () => {
       e.preventDefault();
       try {
         const data = await axios.put(
-          `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/admin/astro/${id}`,
+          `https://ayush-astro-backend.vercel.app/admin/astro/${id}`,
           {
             firstName,
             lastName,
@@ -303,12 +304,71 @@ const Astrologers = () => {
     );
   }
 
+  // Fee Modal
+  function FeeModal(props) {
+    const [fees, setFees] = useState("");
+
+    // Add Astrologer Fess
+    const addFees = async (e) => {
+      e.preventDefault();
+      try {
+        const data = await axios.post(
+          `https://ayush-astro-backend.vercel.app/admin/fees/${id}`,
+          {
+            fees,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        toast.success("Fees Added successfully");
+        fetchData();
+        setOpen(false);
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Add Astrologer Fees
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={addFees}>
+            <Form.Group>
+              <Form.Label>Fees</Form.Label>
+              <Form.Control
+                type="number"
+                onChange={(e) => setFees(e.target.value)}
+              />
+            </Form.Group>
+            <Button style={{marginTop : '1%' , borderRadius : '0'}} type='submit'>Submit</Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+    );
+  }
+
   return (
     <>
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+
+      <FeeModal show={open} onHide={() => setOpen(false)} />
 
       <section>
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
@@ -326,10 +386,7 @@ const Astrologers = () => {
           </button>
         </div>
 
-        <Container
-          className="wcomp overflow-x-auto"
-          style={{ marginTop: "2%" }}
-        >
+        <div className="wcomp overflow-x-auto" style={{ marginTop: "2%" }}>
           <Table style={{ color: "black" }} striped bordered hover>
             <thead>
               <tr>
@@ -343,7 +400,7 @@ const Astrologers = () => {
                 <th>Pin Code</th>
                 <th>Rashi</th>
                 <th>Skills</th>
-
+                <td>Fees</td>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -368,7 +425,18 @@ const Astrologers = () => {
                       <p key={index}> {a} </p>
                     ))}
                   </td>
-
+                  <td>
+                    {" "}
+                    <Button
+                      variant="outline-success"
+                      onClick={() => {
+                        setID(i._id);
+                        setOpen(true);
+                      }}
+                    >
+                      Add Fee
+                    </Button>
+                  </td>
                   <td>
                     <span style={{ display: "flex", gap: "20px" }}>
                       {" "}
@@ -392,7 +460,7 @@ const Astrologers = () => {
               ))}
             </tbody>
           </Table>
-        </Container>
+        </div>
       </section>
     </>
   );

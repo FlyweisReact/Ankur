@@ -90,6 +90,13 @@ const VendorLogin = () => {
                 </div>
               )}
             </button>
+            {/* <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="py-2 cursor-pointer tracking-wider bg-orange-600 flex justify-center items-center w-full rounded-md font-medium   "
+            >
+              Astrologer Panel
+            </button> */}
           </section>
         </form>
       </div>

@@ -15,6 +15,9 @@ import AdminReview from "./components/vendorPanel/components/pages/Astrologer/Ad
 import UploadDocs from "./components/vendorPanel/components/pages/Astrologer/UploadDocs";
 import Banners from "./components/vendorPanel/components/pages/Astrologer/Banners";
 import AdminDiscount from "./components/vendorPanel/components/pages/Astrologer/AdminDiscount";
+import Support from "./components/vendorPanel/components/pages/Support";
+import Product from "./components/vendorPanel/components/pages/Product";
+import Testimonial from "./components/vendorPanel/components/pages/Testimonial";
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
         <Route path="/msg" element={<MSG />} />
         <Route path="/book" element={<Booking />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/testimonial" element={<Testimonial />} />
       </Routes>
     </>
   );

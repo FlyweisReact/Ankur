@@ -22,7 +22,7 @@ const Kundli = () => {
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/kundli",
+        "https://ayush-astro-backend.vercel.app/kundli",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const Kundli = () => {
   const deleteKundli = async (id) => {
     try {
       const data = await axios.delete(
-        `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/kundli/${id}`,
+        `https://ayush-astro-backend.vercel.app/kundli/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ const Kundli = () => {
       e.preventDefault();
       try {
         const data = await axios.post(
-          "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/kundli",
+          "https://ayush-astro-backend.vercel.app/kundli",
           {
             name,
             gender,
@@ -101,7 +101,7 @@ const Kundli = () => {
       e.preventDefault();
       try {
         const data = await axios.put(
-          `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/kundli/${id}`,
+          `https://ayush-astro-backend.vercel.app/kundli/${id}`,
           {
             name,
             gender,

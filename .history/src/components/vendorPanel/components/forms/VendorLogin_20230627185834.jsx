@@ -90,6 +90,8 @@ const VendorLogin = () => {
                 </div>
               )}
             </button>
+
+       
           </section>
         </form>
       </div>

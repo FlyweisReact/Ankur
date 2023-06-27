@@ -90,6 +90,14 @@ const VendorLogin = () => {
                 </div>
               )}
             </button>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13999.162199381293!2d77.13700025!3d28.695911400000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d03dae3f79cd7%3A0x5ba6cc90c07c70d7!2sJhulelal%20Apartment!5e0!3m2!1sen!2sin!4v1687872203305!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            {/* <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="py-2 cursor-pointer tracking-wider bg-orange-600 flex justify-center items-center w-full rounded-md font-medium   "
+            >
+              Astrologer Panel
+            </button> */}
           </section>
         </form>
       </div>

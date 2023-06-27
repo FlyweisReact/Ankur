@@ -1,51 +1,75 @@
 /** @format */
 
-import React from "react";
+import React, { useState } from "react";
 import HOC from "../../layout/HOC";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
-
-const BannerImage = [
-  {
-    image:
-      "https://mdbcdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(73).webp",
-    name: "Image Of Banner",
-  },
-  {
-    image: "https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain1.webp",
-    name: "Image Of Banner",
-  },
-  {
-    image: "https://mdbcdn.b-cdn.net/img/Photos/Vertical/mountain2.webp",
-    name: "Image Of Banner",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-A0sC9efi8q1WcBOSxiL54JeverkoprDEEw&usqp=CAU",
-    name: "Image Of Banner",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShlG4Urst44E0RNXFWEHFZsLucIj1DzOE7CA&usqp=CAU",
-    name: "Image Of Banner",
-  },
-  {
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScy9iUuq9tuI8od0d9Ekpzmcpdy3U2uS8JZjHfGy9L7w_SRqB4iwhQI3FhMeLU1r_3h_c&usqp=CAU",
-    name: "Image Of Banner",
-  },
-];
+import axios from "axios";
+import { useEffect } from "react";
 
 const Banners = () => {
   const [modalShow, setModalShow] = React.useState(false);
 
+  const [data, setData] = useState([]);
+
+  const GetBanners = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ayush-astro-backend.vercel.app/banner/getbanner/"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    GetBanners();
+  }, []);
+
   function MyVerticallyCenteredModal(props) {
+    const [image, setImage] = useState("");
+    const [url, setUrl] = useState("");
+    const [desc, setDesc] = useState("");
+
+    const postDetails = (e) => {
+      const data = new FormData();
+      data.append("file", image);
+      data.append("upload_preset", "ml_default");
+      data.append("cloud_name", "dbcnha741");
+      fetch("https://api.cloudinary.com/v1_1/dbcnha741/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setUrl(data.url);
+          console.log(data.url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     const submitHandler = async (e) => {
       e.preventDefault();
-      toast.success("Banner Added Successfully");
-      setModalShow(false);
+      try {
+        const data = await axios.post(
+          "https://ayush-astro-backend.vercel.app/banner/addBanner",
+          {
+            link: url,
+            desc,
+          }
+        );
+        console.log(data);
+        toast.success("Banner Added Successfully");
+        setModalShow(false);
+        GetBanners();
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     return (
@@ -70,14 +94,22 @@ const Banners = () => {
           >
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Image</Form.Label>
-              <Form.Control type="file" />
+              <Form.Control
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="New" required />
+            <Form.Group>
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                onChange={(e) => setDesc(e.target.value)}
+                onClick={() => postDetails()}
+              />
             </Form.Group>
 
+            <br />
             <Button variant="outline-success" type="submit">
               Submit
             </Button>
@@ -87,8 +119,17 @@ const Banners = () => {
     );
   }
 
-  const deleteData = async (name) => {
-    toast.success("Banner Deleted SuccessFully");
+  const deleteHandler = async (id) => {
+    try {
+      const data = await axios.delete(
+        `https://ayush-astro-backend.vercel.app/banner/deleteBanner/${id}`
+      );
+      console.log(data);
+      toast.success("Banner Deleted Successfully");
+      GetBanners();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -101,7 +142,7 @@ const Banners = () => {
       <section>
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
           <span className="tracking-widest text-slate-900 font-semibold uppercase ">
-            All Banner
+            All Banner (Total : {data?.data?.length})
           </span>
           <Button
             variant="outline-success"
@@ -118,28 +159,25 @@ const Banners = () => {
         className="main-card--container"
         style={{ color: "black", marginBottom: "10%" }}
       >
-        {BannerImage.map((i) => {
+        {data?.data?.map((i) => {
           return (
             <>
               <div className="card-container">
                 <div className="card">
                   <div className="card-body">
                     <img
-                      src={i.image}
+                      src={`${i.link}`}
                       style={{ width: "100%", height: "200px" }}
                       alt=""
                     />
-                    <div
-                      className="card-title"
-                      style={{ textAlign: "center", marginTop: "2%" }}
-                    >
-                      {i.name}
+                    <div style={{ fontSize: "1.6rem", textAlign: "center" }}>
+                      <p> {i.desc} </p>
                     </div>
                     <div>
                       <Button
                         variant="outline-danger"
-                        onClick={() => deleteData(i.name)}
                         style={{ width: "100%" }}
+                        onClick={() => deleteHandler(i._id)}
                       >
                         Delete
                       </Button>

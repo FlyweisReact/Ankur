@@ -1,32 +1,70 @@
 /** @format */
 
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillEdit } from "react-icons/ai";
 import { AiFillDelete } from "react-icons/ai";
 import HOC from "../../layout/HOC";
 import { toast } from "react-toastify";
 import { Container, Table, Modal, Form, Button } from "react-bootstrap";
+import axios from "axios";
 
 const AdminDiscount = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [editA, setP] = useState(false);
+  const [id, setID] = useState("");
 
+  const [data, setData] = useState([]);
 
+  const fetchData = async () => {
+    try {
+      const { data } = await axios.get(
+        "https://ayush-astro-backend.vercel.app/discount/"
+      );
+      setData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, [axios]);
 
+  const deleteHandler = async (id) => {
+    try {
+      const { data } = await axios.delete(
+        `https://ayush-astro-backend.vercel.app/discount/${id}`
+      );
+      toast.success("Discount Deleted Successfully");
+      fetchData();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // Modal ---
   function MyVerticallyCenteredModal(props) {
-  
+    const [code, setC] = useState("");
+    const [activeDate, setA] = useState("");
+    const [expireDate, setE] = useState("");
+    const [percent, setP] = useState("");
 
     // Add Kundli
     const addKundli = async (e) => {
       e.preventDefault();
       try {
-       
+        const data = await axios.post(
+          "https://ayush-astro-backend.vercel.app/discount/",
+          {
+            code,
+            activeDate,
+            expireDate,
+            percent,
+          }
+        );
         toast.success("Discount Added SuccessFully");
         setModalShow(false);
-   
+        fetchData();
       } catch (err) {
         console.log("add Discount err => ", err);
       }
@@ -36,11 +74,20 @@ const AdminDiscount = () => {
     const editAstro = async (e) => {
       e.preventDefault();
       try {
-   
+        const data = await axios.put(
+          `https://ayush-astro-backend.vercel.app/discount/${id}`,
+          {
+            code,
+            activeDate,
+            expireDate,
+            percent,
+          }
+        );
+        toast.success("Discount Added SuccessFully");
         setModalShow(false);
-        toast.success("Discount Edited Successfully");
+        fetchData();
       } catch (err) {
-        console.log("Edit Discount Err =>", err);
+        console.log("add Discount err => ", err);
       }
     };
 
@@ -59,10 +106,11 @@ const AdminDiscount = () => {
         <Modal.Body>
           <Form onSubmit={editA ? editAstro : addKundli}>
             <Form.Group>
-              <Form.Label>Product</Form.Label>
+              <Form.Label>Coupon Code</Form.Label>
               <Form.Control
                 type="text"
                 required
+                onChange={(e) => setC(e.target.value)}
               />
             </Form.Group>
             <Form.Group>
@@ -70,20 +118,16 @@ const AdminDiscount = () => {
               <Form.Control
                 type="text"
                 required
+                onChange={(e) => setP(e.target.value)}
               />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Coupon Code</Form.Label>
-              <Form.Control
-                type="text"
-                required
-              />
-            </Form.Group>
+
             <Form.Group>
               <Form.Label>Activation Date</Form.Label>
               <Form.Control
                 type="date"
                 required
+                onChange={(e) => setA(e.target.value)}
               />
             </Form.Group>
             <Form.Group>
@@ -91,9 +135,10 @@ const AdminDiscount = () => {
               <Form.Control
                 type="date"
                 required
+                onChange={(e) => setE(e.target.value)}
               />
             </Form.Group>
-          
+
             <br />
             <Button variant="outline-success" type="submit">
               Submit
@@ -114,7 +159,7 @@ const AdminDiscount = () => {
       <section>
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
           <span className="tracking-widest text-slate-900 font-semibold uppercase ">
-            All Discounts (Total : 5)
+            All Discounts
           </span>
           <button
             onClick={() => {
@@ -134,47 +179,42 @@ const AdminDiscount = () => {
           <Table style={{ color: "black" }} striped bordered hover>
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Discount</th>
                 <th>Coupon Code</th>
-                <th>Min. Order</th>
                 <th>Activation Date</th>
                 <th>Expiry Date</th>
+                <th>Discount</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody style={{ color: "black" }}>
-              <tr>
-                <td>Product</td>
-                <td> 55% </td>
-                <td>KSHd34</td>
-                <td> 452 </td>
-                <td> 12/10/2022 </td>
-                <td> 10/12/2033  </td>
-                <td>
-                  <span style={{ display: "flex", gap: "20px" }}>
+              {data?.message?.map((i, index) => (
+                <tr key={index}>
+                  <td> {i.code} </td>
+                  <td> {i.activeDate} </td>
+                  <td> {i.expireDate} </td>
+                  <td> {i.percent}% </td>
+                  <td>
                     {" "}
-                    <AiFillEdit
-                      cursor="pointer"
-                      color="blue"
-                      onClick={() => {
-                        // setID(i._id);
-                        setP(true);
-                        setModalShow(true);
-                      }}
-                    />{" "}
-                    <AiFillDelete
-                      cursor="pointer"
-                      color="red"
-                      onClick={() =>
-                        //   deleteKundli(i._id)
-                        toast.success("Deleted")
-                      }
-                    />{" "}
-                  </span>
-                </td>
-              </tr>
-              
+                    <span style={{ display: "flex", gap: "20px" }}>
+                      {" "}
+                      <AiFillEdit
+                        cursor="pointer"
+                        color="blue"
+                        onClick={() => {
+                          setID(i._id);
+                          setP(true);
+                          setModalShow(true);
+                        }}
+                      />{" "}
+                      <AiFillDelete
+                        cursor="pointer"
+                        color="red"
+                        onClick={() => deleteHandler(i._id)}
+                      />{" "}
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Container>

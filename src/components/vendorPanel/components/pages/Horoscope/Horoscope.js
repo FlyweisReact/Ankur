@@ -22,7 +22,7 @@ const AdminHoro = () => {
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/horoscope",
+        "https://ayush-astro-backend.vercel.app/horoscope",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const AdminHoro = () => {
   const deleteKundli = async (id) => {
     try {
       const data = await axios.delete(
-        `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/horoscope/${id}`,
+        `https://ayush-astro-backend.vercel.app/horoscope/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ const AdminHoro = () => {
       e.preventDefault();
       try {
         const data = await axios.post(
-          "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/horoscope",
+          "https://ayush-astro-backend.vercel.app/horoscope",
           {
             date,
             horoScope,
@@ -106,7 +106,7 @@ const AdminHoro = () => {
       e.preventDefault();
       try {
         const data = await axios.put(
-          `http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/horoscope/${id}`,
+          `https://ayush-astro-backend.vercel.app/horoscope/${id}`,
           {   date,
             horoScope,
             profession,
@@ -155,7 +155,7 @@ const AdminHoro = () => {
             <Form.Group>
               <Form.Label>Horoscope</Form.Label>
               <Form.Control
-                type="time"
+                type="text"
                 required
                 onChange={(e) => setHoroscope(e.target.value)}
               />
@@ -260,6 +260,7 @@ const AdminHoro = () => {
                 <th>Health</th>
                 <th>Travel</th>
                 <th>Luck</th>
+             
                 <th>Action</th>
               </tr>
             </thead>
@@ -273,6 +274,7 @@ const AdminHoro = () => {
                   <td> {i.HEALTH} </td>
                   <td> {i.TRAVEL} </td>
                   <td> {i.LUCK} </td>
+                
                   <td>
                     <span style={{ display: "flex", gap: "20px" }}>
                       {" "}

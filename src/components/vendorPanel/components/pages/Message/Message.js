@@ -1,15 +1,25 @@
 /** @format */
 
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { Container, Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import HOC from "../../layout/HOC";
 
 const MSG = () => {
+
+  const [message , setMessage] = useState('')
+
   const sendMsg = async (e) => {
     e.preventDefault();
-    toast.success("Message Send SuccessFully");
+    try{
+      const data = await axios.post('https://ayush-astro-backend.vercel.app/admin/notification' , {message})
+        console.log(data)
+        toast.success('Notification sended successfully')
+    }catch(err){
+      console.log(err)
+    }
   };
 
   return (
@@ -39,6 +49,7 @@ const MSG = () => {
                 width: "100%",
                 padding: "10px",
               }}
+              onChange={(e) => setMessage(e.target.value)}
             />
 
             <Button

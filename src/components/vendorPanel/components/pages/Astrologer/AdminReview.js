@@ -13,7 +13,7 @@ const AdminReview = () => {
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        "http://ec2-15-206-210-177.ap-south-1.compute.amazonaws.com:3002/kundli",
+        "https://ayush-astro-backend.vercel.app/admin/view-feedback",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -22,7 +22,7 @@ const AdminReview = () => {
       );
       setData(data);
     } catch (err) {
-      console.log(" Fetch All Review's err => ", err);
+      console.log(" Fetch All Feedback's err => ", err);
     }
   }, [token]);
 
@@ -39,7 +39,7 @@ const AdminReview = () => {
       <section>
         <div className="pb-4 sticky top-0  w-full flex justify-between items-center bg-white">
           <span className="tracking-widest text-slate-900 font-semibold uppercase ">
-            Reviews (Total : {data?.details?.length})
+            Feedback (Total : {data?.Feedback?.length})
           </span>
         </div>
 
@@ -51,17 +51,18 @@ const AdminReview = () => {
             <thead>
               <tr>
                 <th>User</th>
-                <th>Astrologer</th>
                 <th>Feedback</th>
+                <th>Create At</th>
               </tr>
             </thead>
             <tbody style={{ color: "black" }}>
-              {data?.details?.map((i, index) => (
+              {data?.Feedback?.map((i, index) => (
                 <tr key={index}>
                   
-                  <td>User</td>
-                  <td>Astrologer</td>
-                  <td>Good</td>
+                 
+                  <td> {i.name  ? i.name : "User"} </td>
+                  <td> {i.Feedback} </td>
+                  <td> {i.createdAt.slice(0,10)} </td>
                  
                 </tr>
               ))}
